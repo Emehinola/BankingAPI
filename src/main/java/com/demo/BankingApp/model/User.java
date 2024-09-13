@@ -51,7 +51,7 @@ public class User {
     public String getFullName(){
         StringBuilder builder = new StringBuilder();
 
-        String name = builder.append(this.firstName).append(this.lastName).toString();
+        String name = builder.append(this.firstName).append(" ").append(this.lastName).toString();
 
         return name;
     }

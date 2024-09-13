@@ -12,7 +12,6 @@ public class AccountUtils {
 
     public static String generateAccountNo() {
 
-
       Year year = Year.now();
 
       int min = 100000;

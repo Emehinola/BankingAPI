@@ -6,5 +6,6 @@ import com.demo.BankingApp.dto.UserRequest;
 public interface UserService {
 
     ApiResponse createAccount(UserRequest request);
+    ApiResponse deleteAccount(Long userId);
 
 }
