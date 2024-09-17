@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.demo.BankingApp.dto.AccountInfo;
+import com.demo.BankingApp.dto.CreditDebitRequest;
 import com.demo.BankingApp.dto.ApiResponse;
 import com.demo.BankingApp.dto.EmailDetails;
 import com.demo.BankingApp.dto.UserRequest;
@@ -39,18 +40,18 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = User.builder()
-            .firstName(request.getFirstName())
-            .lastName(request.getLastName())
-            .otherName(request.getOtherName())
-            .gender(request.getGender())
-            .address(request.getAddress())
-            .stateOfOrigin(request.getStateOfOrigin())
-            .email(request.getEmail())
-            .phoneNumber(request.getPhoneNumber())
-            .altPhoneNumber(request.getAltPhoneNumber())
-            .accountNumber(AccountUtils.generateAccountNo())
-            .accountBalance(BigDecimal.ZERO)
-            .status("ACTIVE")
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .otherName(request.getOtherName())
+                .gender(request.getGender())
+                .address(request.getAddress())
+                .stateOfOrigin(request.getStateOfOrigin())
+                .email(request.getEmail())
+                .phoneNumber(request.getPhoneNumber())
+                .altPhoneNumber(request.getAltPhoneNumber())
+                .accountNumber(AccountUtils.generateAccountNo())
+                .accountBalance(BigDecimal.ZERO)
+                .status("ACTIVE")
             .build();
 
             User savedUser = repo.save(user); // save user
@@ -93,5 +94,101 @@ public class UserServiceImpl implements UserService {
             .build();
 
             return response;
+    }
+
+    public ApiResponse balanceEnquiry(String accountNumber){
+
+        if(repo.existsByAccountNumber(accountNumber)){
+            User user = repo.findByAccountNumber(accountNumber);
+            AccountInfo info = AccountInfo.builder()
+                .accountBalance(user.getAccountBalance())
+                .accountName(user.getFullName())
+                .accountNumber(user.getAccountNumber())
+            .build();
+            
+            return ApiResponse.builder()
+                    .code(HttpStatus.OK.value())
+                    .message("Balance enquiry")
+                    .data(info)
+                .build();
+        }
+
+        return ApiResponse.builder()
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .message("Account does not exist")
+                    .data(null)
+                .build();
+    }
+
+    @Override
+    public ApiResponse creditAccount(CreditDebitRequest request){
+
+        if(!repo.existsByAccountNumber(request.getAccountNumber())){
+            return ApiResponse.builder()
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .message("Account does not exist")
+                    .data(null)
+                .build();
+        }
+
+        // get user
+        User user = repo.findByAccountNumber(request.getAccountNumber());
+
+        // credit operation
+        user.setAccountBalance(user.getAccountBalance().add(request.getAmount()));
+        repo.save(user); // save user
+
+        AccountInfo info = AccountInfo.builder()
+                .accountBalance(user.getAccountBalance())
+                .accountName(user.getFullName())
+                .accountNumber(user.getAccountNumber())
+            .build();
+        
+        return ApiResponse.builder()
+            .code(HttpStatus.OK.value())
+            .message("Account successfully credited")
+            .data(info)
+        .build();
+    }
+
+    @Override
+    public ApiResponse debitAccount(CreditDebitRequest request){
+
+        if(!repo.existsByAccountNumber(request.getAccountNumber())){
+            return ApiResponse.builder()
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .message("Account does not exist")
+                    .data(null)
+                .build();
+        }
+        
+
+        // get user
+        User user = repo.findByAccountNumber(request.getAccountNumber());
+
+        if (!user.hasSufficientFund(request.getAmount())){
+            return ApiResponse.builder()
+                .code(HttpStatus.BAD_REQUEST.value())
+                .message("Insufficient fund")
+                .data(null)
+            .build();
+        }
+
+        // debit operation
+        user.setAccountBalance(user.getAccountBalance().subtract(request.getAmount()));
+
+        AccountInfo info = AccountInfo.builder()
+            .accountBalance(user.getAccountBalance())
+            .accountName(user.getFullName())
+            .accountNumber(user.getAccountNumber())
+        .build();
+
+        repo.save(user); // save user
+        
+        return ApiResponse.builder()
+            .code(HttpStatus.OK.value())
+            .message("Account successfully debited")
+            .data(info)
+        .build();
     }
 }

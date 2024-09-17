@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.demo.BankingApp.dto.EmailDetails;
 
+
 @Service
 public class EmailServiceImpl implements EmailService {
 
@@ -21,6 +22,7 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendEmailAlert(EmailDetails details){
         try{
+
             SimpleMailMessage message = new SimpleMailMessage();
 
             message.setFrom(emailUser);

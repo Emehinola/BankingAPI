@@ -56,4 +56,8 @@ public class User {
         return name;
     }
 
+    public Boolean hasSufficientFund(BigDecimal requestAmount){
+        return this.accountBalance.compareTo(requestAmount) > 0;
+    }
+
 }
