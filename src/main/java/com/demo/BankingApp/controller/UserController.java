@@ -11,16 +11,30 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.demo.BankingApp.dto.ApiResponse;
 import com.demo.BankingApp.dto.CreditDebitRequest;
+import com.demo.BankingApp.dto.TransferData;
 import com.demo.BankingApp.dto.UserRequest;
-import com.demo.BankingApp.service.impl.UserService;
+import com.demo.BankingApp.service.TransferService;
+import com.demo.BankingApp.service.UserService;
+
+// import io.swagger.v3.oas.annotations.Operation;
+// import io.swagger.v3.oas.annotations.responses.ApiResponse;
+// import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/user")
+// @Tag(name = "User account management API")
 public class UserController {
     
     @Autowired
     UserService service;
 
+    @Autowired
+    TransferService transferService;
+
+    // @Operation(
+    //     summary = "Account creation",
+    //     description = "This is account creation endpoint"
+    // )
     @PostMapping("/")
     public ApiResponse createAccount(@RequestBody UserRequest request){
         return service.createAccount(request);
@@ -44,6 +58,11 @@ public class UserController {
     @PostMapping("/debit")
     public ApiResponse debitAccount(@RequestBody CreditDebitRequest request) {        
         return service.debitAccount(request);
+    }
+
+    @PostMapping("/transfer")
+    public ApiResponse transfer(@RequestBody TransferData data){
+        return transferService.transfer(data);
     }
     
 }

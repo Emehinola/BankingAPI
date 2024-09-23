@@ -1,4 +1,4 @@
-package com.demo.BankingApp.service.impl;
+package com.demo.BankingApp.service;
 
 import com.demo.BankingApp.dto.EmailDetails;
 

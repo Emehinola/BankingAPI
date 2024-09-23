@@ -13,6 +13,8 @@ import com.demo.BankingApp.dto.EmailDetails;
 import com.demo.BankingApp.dto.UserRequest;
 import com.demo.BankingApp.model.User;
 import com.demo.BankingApp.repository.UserRepo;
+import com.demo.BankingApp.service.EmailService;
+import com.demo.BankingApp.service.UserService;
 import com.demo.BankingApp.utils.AccountUtils;
 
 
@@ -168,7 +170,7 @@ public class UserServiceImpl implements UserService {
 
         if (!user.hasSufficientFund(request.getAmount())){
             return ApiResponse.builder()
-                .code(HttpStatus.BAD_REQUEST.value())
+                .code(HttpStatus.BAD_REQUEST.value())  
                 .message("Insufficient fund")
                 .data(null)
             .build();
@@ -190,5 +192,13 @@ public class UserServiceImpl implements UserService {
             .message("Account successfully debited")
             .data(info)
         .build();
+    }
+
+    public boolean accountExists(String accountNumber){
+        return repo.existsByAccountNumber(accountNumber);
+    }
+
+    public User getUserByAccountNumber(String accountNumber){
+        return repo.findByAccountNumber(accountNumber);
     }
 }

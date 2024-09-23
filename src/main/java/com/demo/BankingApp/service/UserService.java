@@ -1,8 +1,9 @@
-package com.demo.BankingApp.service.impl;
+package com.demo.BankingApp.service;
 
 import com.demo.BankingApp.dto.CreditDebitRequest;
 import com.demo.BankingApp.dto.ApiResponse;
 import com.demo.BankingApp.dto.UserRequest;
+import com.demo.BankingApp.model.User;
 
 public interface UserService {
 
@@ -11,5 +12,7 @@ public interface UserService {
     ApiResponse balanceEnquiry(String accountNumber);
     ApiResponse creditAccount(CreditDebitRequest request);
     ApiResponse debitAccount(CreditDebitRequest request);
+    boolean accountExists(String accountNumber);
+    User getUserByAccountNumber(String accountNumber);
 
 }

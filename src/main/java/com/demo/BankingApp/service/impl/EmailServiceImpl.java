@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.demo.BankingApp.dto.EmailDetails;
 
+import com.demo.BankingApp.service.EmailService;
+
 
 @Service
 public class EmailServiceImpl implements EmailService {
