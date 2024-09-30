@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.demo.BankingApp.dto.AccountInfo;
 import com.demo.BankingApp.dto.CreditDebitRequest;
-import com.demo.BankingApp.dto.ApiResponse;
+import com.demo.BankingApp.dto.BaseResponse;
 import com.demo.BankingApp.dto.EmailDetails;
 import com.demo.BankingApp.dto.UserRequest;
 import com.demo.BankingApp.model.User;
@@ -30,10 +30,10 @@ public class UserServiceImpl implements UserService {
     EmailService emailService;
 
     @Override
-    public ApiResponse createAccount(UserRequest request){
+    public BaseResponse createAccount(UserRequest request){
 
         if(repo.existsByEmail(request.getEmail())){
-            return new ApiResponse(
+            return new BaseResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 "Account already exists",
                 null
@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
             .build();
             emailService.sendEmailAlert(emailDetails);
 
-            ApiResponse response = ApiResponse.builder()
+            BaseResponse response = BaseResponse.builder()
                 .code(HttpStatus.OK.value())
                 .message("Account created successfully!")
                 .data(info)
@@ -87,9 +87,9 @@ public class UserServiceImpl implements UserService {
             return response;
     }
 
-    public ApiResponse deleteAccount(Long id){
+    public BaseResponse deleteAccount(Long id){
         repo.deleteById(id); // delete account
-        ApiResponse response = ApiResponse.builder()
+        BaseResponse response = BaseResponse.builder()
                 .code(HttpStatus.OK.value())
                 .message("Account deleted successfully!")
                 .data(null)
@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService {
             return response;
     }
 
-    public ApiResponse balanceEnquiry(String accountNumber){
+    public BaseResponse balanceEnquiry(String accountNumber){
 
         if(repo.existsByAccountNumber(accountNumber)){
             User user = repo.findByAccountNumber(accountNumber);
@@ -108,14 +108,14 @@ public class UserServiceImpl implements UserService {
                 .accountNumber(user.getAccountNumber())
             .build();
             
-            return ApiResponse.builder()
+            return BaseResponse.builder()
                     .code(HttpStatus.OK.value())
                     .message("Balance enquiry")
                     .data(info)
                 .build();
         }
 
-        return ApiResponse.builder()
+        return BaseResponse.builder()
                     .code(HttpStatus.NOT_FOUND.value())
                     .message("Account does not exist")
                     .data(null)
@@ -123,10 +123,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResponse creditAccount(CreditDebitRequest request){
+    public BaseResponse creditAccount(CreditDebitRequest request){
 
         if(!repo.existsByAccountNumber(request.getAccountNumber())){
-            return ApiResponse.builder()
+            return BaseResponse.builder()
                     .code(HttpStatus.NOT_FOUND.value())
                     .message("Account does not exist")
                     .data(null)
@@ -146,7 +146,7 @@ public class UserServiceImpl implements UserService {
                 .accountNumber(user.getAccountNumber())
             .build();
         
-        return ApiResponse.builder()
+        return BaseResponse.builder()
             .code(HttpStatus.OK.value())
             .message("Account successfully credited")
             .data(info)
@@ -154,10 +154,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResponse debitAccount(CreditDebitRequest request){
+    public BaseResponse debitAccount(CreditDebitRequest request){
 
         if(!repo.existsByAccountNumber(request.getAccountNumber())){
-            return ApiResponse.builder()
+            return BaseResponse.builder()
                     .code(HttpStatus.NOT_FOUND.value())
                     .message("Account does not exist")
                     .data(null)
@@ -169,7 +169,7 @@ public class UserServiceImpl implements UserService {
         User user = repo.findByAccountNumber(request.getAccountNumber());
 
         if (!user.hasSufficientFund(request.getAmount())){
-            return ApiResponse.builder()
+            return BaseResponse.builder()
                 .code(HttpStatus.BAD_REQUEST.value())  
                 .message("Insufficient fund")
                 .data(null)
@@ -187,7 +187,7 @@ public class UserServiceImpl implements UserService {
 
         repo.save(user); // save user
         
-        return ApiResponse.builder()
+        return BaseResponse.builder()
             .code(HttpStatus.OK.value())
             .message("Account successfully debited")
             .data(info)

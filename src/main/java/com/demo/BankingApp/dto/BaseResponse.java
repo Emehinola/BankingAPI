@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ApiResponse {
+public class BaseResponse {
 
     private int code;
     private String message;
