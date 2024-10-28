@@ -1,0 +1,14 @@
+package com.demo.BankingApp.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class AccountStatementDto {
+    private String accountNumber;
+    private String startDate;
+    private String endDate;
+}

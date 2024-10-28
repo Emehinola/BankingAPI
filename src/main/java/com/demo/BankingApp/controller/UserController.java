@@ -9,16 +9,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.demo.BankingApp.dto.AccountStatementDto;
 import com.demo.BankingApp.dto.BaseResponse;
 import com.demo.BankingApp.dto.CreditDebitRequest;
 import com.demo.BankingApp.dto.TransferData;
 import com.demo.BankingApp.dto.UserRequest;
 import com.demo.BankingApp.service.TransferService;
 import com.demo.BankingApp.service.UserService;
+import com.demo.BankingApp.service.impl.AccountStatement;
+import com.itextpdf.text.DocumentException;
+import com.demo.BankingApp.model.Transaction;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import java.util.*;
+import java.io.*;
 
 @RestController
 @RequestMapping("/api/user")
@@ -30,6 +37,9 @@ public class UserController {
 
     @Autowired
     TransferService transferService;
+
+    @Autowired
+    AccountStatement accountStatement;
 
     @Operation(
         summary = "Account creation",
@@ -108,5 +118,17 @@ public class UserController {
     public BaseResponse transfer(@RequestBody TransferData data){
         return transferService.transfer(data);
     }
-    
+
+    @Operation(
+        summary = "Generate account statement",
+        description = "Endpoint to generate account statement"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "Success response"
+    )
+    @PostMapping("/generate-statement")
+    List<Transaction> generateAccountStatement(@RequestBody AccountStatementDto accountStatementDto) throws FileNotFoundException, DocumentException{
+        return accountStatement.generateStatement(accountStatementDto);
+    }
 }

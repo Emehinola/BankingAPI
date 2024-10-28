@@ -40,4 +40,9 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+    @Override
+    public void sendEmailWithAttachment(EmailDetails details){
+        
+    }
+
 }
