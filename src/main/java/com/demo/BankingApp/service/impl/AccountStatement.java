@@ -1,6 +1,7 @@
 package com.demo.BankingApp.service.impl;
 
 import com.demo.BankingApp.repository.TransactionRepo;
+import com.demo.BankingApp.service.EmailService;
 import com.demo.BankingApp.service.UserService;
 import com.itextpdf.awt.geom.Rectangle;
 import com.itextpdf.text.BaseColor;
@@ -13,6 +14,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.codec.Base64.OutputStream;
 import com.demo.BankingApp.dto.AccountStatementDto;
+import com.demo.BankingApp.dto.EmailDetails;
 import com.demo.BankingApp.model.Transaction;
 import com.demo.BankingApp.model.User;
 
@@ -38,6 +40,9 @@ public class AccountStatement {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EmailService emailService;
 
     private final static String FILE_LOCATION = "/Users/samuel/documents/BankingApp/statement.pdf";
 
@@ -159,5 +164,14 @@ public class AccountStatement {
         doc.add(transactionsTable);
 
         doc.close();
+
+        EmailDetails details = EmailDetails.builder()
+            .receipient(user.getEmail())
+            .subject("STATEMENT OF ACCOUNT")
+            .message("Find attached below a copy of the requested account statement")
+            .attachment(FILE_LOCATION)
+        .build();
+
+        emailService.sendEmailWithAttachment(details);
     }
 }
